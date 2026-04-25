@@ -34,6 +34,7 @@
       --accent-grad: linear-gradient(to right, #06B6D4, #EC4899);
       --border-glass: 1px solid rgba(255, 255, 255, 0.1);
       --perspective: 2000px;
+      --face-dist: 25vh;
     }
 
     html {
@@ -139,10 +140,54 @@
     }
 
     @media (max-width: 768px) {
+      #nav {
+        padding: 1rem 1.5rem;
+      }
       .nav-links {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--bg);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        z-index: 1000;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .nav-links a {
+        font-size: 1.5rem;
+      }
+      .mobile-menu-toggle {
+        display: block;
+        z-index: 1001;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+      .nav-cta {
         display: none;
       }
     }
+
+    .mobile-menu-toggle {
+      display: none;
+    }
+    .mobile-menu-toggle span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background: #fff;
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+    .nav-links.active ~ .mobile-menu-toggle span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .nav-links.active ~ .mobile-menu-toggle span:nth-child(2) { opacity: 0; }
+    .nav-links.active ~ .mobile-menu-toggle span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
 
     /* ───────────────────────────────────────────
        HERO — 3D ROLODEX
@@ -233,19 +278,49 @@
     }
 
     .face-front {
-      transform: rotateX(0deg) translateZ(25vh);
+      transform: rotateX(0deg) translateZ(var(--face-dist));
     }
 
     .face-bottom {
-      transform: rotateX(-90deg) translateZ(25vh);
+      transform: rotateX(-90deg) translateZ(var(--face-dist));
     }
 
     .face-back {
-      transform: rotateX(-180deg) translateZ(25vh);
+      transform: rotateX(-180deg) translateZ(var(--face-dist));
     }
 
     .face-top {
-      transform: rotateX(90deg) translateZ(25vh);
+      transform: rotateX(90deg) translateZ(var(--face-dist));
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --perspective: 1200px;
+      }
+      .hero-cube-scene {
+        width: 40vh;
+        height: 40vh;
+      }
+      .face-front, .face-bottom, .face-back, .face-top {
+        transform: translateZ(20vh); /* Fallback */
+      }
+      .face-front { transform: rotateX(0deg) translateZ(20vh); }
+      .face-bottom { transform: rotateX(-90deg) translateZ(20vh); }
+      .face-back { transform: rotateX(-180deg) translateZ(20vh); }
+      .face-top { transform: rotateX(90deg) translateZ(20vh); }
+
+      .hero-info {
+        left: 1.5rem;
+        bottom: 8rem;
+      }
+      .hero-buttons {
+        bottom: 3.5rem;
+        flex-direction: column;
+        width: calc(100% - 3rem);
+      }
+      .btn-primary, .btn-ghost {
+        text-align: center;
+      }
     }
 
     /* Hero overlay info */
@@ -1286,6 +1361,11 @@
         <li><a href="#footer">Contact</a></li>
       </ul>
     </nav>
+    <div class="mobile-menu-toggle" id="mobile-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
     <a href="#pricing" class="nav-cta" id="nav-cta-btn">Let's Talk</a>
   </header>
 
@@ -1738,6 +1818,24 @@
         navEl.style.borderBottom = 'none';
       }
     });
+
+    // ─── MOBILE MENU TOGGLE ───
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (mobileToggle && navLinks) {
+      mobileToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileToggle.classList.toggle('active');
+      });
+
+      // Close menu when a link is clicked
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          navLinks.classList.remove('active');
+          mobileToggle.classList.remove('active');
+        });
+      });
+    }
   </script>
 </body>
 
